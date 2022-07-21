@@ -2,6 +2,7 @@ package com.nowcoder.app.community.intercepter;
 
 import com.nowcoder.app.community.pojo.LoginTicket;
 import com.nowcoder.app.community.pojo.User;
+import com.nowcoder.app.community.service.MessageService;
 import com.nowcoder.app.community.service.UserService;
 import com.nowcoder.app.community.util.Community_tool;
 import com.nowcoder.app.community.util.HostHolder;
@@ -27,6 +28,8 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 	private UserService userService;
 	@Autowired
 	private HostHolder hostHolder;
+	@Autowired
+	private MessageService messageService;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -51,6 +54,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 		User user = hostHolder.getUser();
 		if (user != null && modelAndView != null) {
 			modelAndView.addObject("loginUser", user);
+			modelAndView.addObject("totalLetterUnreadCount", messageService.findLetterUnreadCount(user.getId(), null));
 		}
 	}
 

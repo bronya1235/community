@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<!-- 分页 -->
+<!--如果没有数据，就不显示分页-->
+<nav class="mt-5" th:if="${page.rows>0}" th:fragment="page">
+	<ul class="pagination justify-content-center">
+		<li th:class="|page-item ${page.curPage==1?'disabled':''}|"><a class="page-link" href="#" th:href="@{${page.path}+'?curPage=1'}">首页</a></li>
+		<li th:class="|page-item ${page.curPage==1?'disabled':''}|"><a class="page-link" href="#" th:href="@{${page.path}+'?curPage='+${page.curPage-1}}">上一页</a></li>
+
+
+		<li th:class="|page-item ${page.curPage==i?'active':''}|" th:each="i:${#numbers.sequence(page.start,page.end)}">
+			<a class="page-link" href="#" th:href="@{${page.path}+'?curPage='+${i}}"th:text="${i}">1</a>
+		</li>
+
+		<li th:class="|page-item ${page.curPage==page.totalPage?'disabled':''}|"><a class="page-link" href="#"th:href="@{${page.path}+'?curPage='+${page.curPage+1}}">下一页</a></li>
+		<li th:class="|page-item ${page.curPage==page.totalPage?'disabled':''}|"><a class="page-link" href="#" th:href="@{${page.path}+'?curPage='+${page.totalPage}}">末页</a></li>
+	</ul>
+</nav>
+
+</body>
+</html>

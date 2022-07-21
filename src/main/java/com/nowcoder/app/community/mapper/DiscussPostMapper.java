@@ -21,4 +21,10 @@ public interface DiscussPostMapper {
 	//动态的sql需要学习，@param用于给参数取别名
 	//用于查询一共有多少个帖子，在分页显示的实现中比较重要
 	int selectDiscussPostRows(@Param("userId") int userId);
+
+	int insertDiscussPost(DiscussPost discussPost);
+
+	DiscussPost selectDiscussPostById(int id);
+
+	int updateCommentCount(int id,int commentCount);
 }
