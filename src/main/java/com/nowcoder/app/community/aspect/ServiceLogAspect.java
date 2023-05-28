@@ -38,6 +38,9 @@ public class ServiceLogAspect {
 	public void advice(JoinPoint joinPoint){
 		//自定义一下日志的格式用户[IP地址]，在[时间]，访问了包下的哪个service方法
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		if(requestAttributes ==null){
+			return;
+		}
 		HttpServletRequest request = requestAttributes.getRequest();
 		String ip = request.getRemoteHost();
 		String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());

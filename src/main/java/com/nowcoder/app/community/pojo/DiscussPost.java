@@ -1,5 +1,7 @@
 package com.nowcoder.app.community.pojo;
 
+import org.springframework.data.elasticsearch.annotations.Document;
+
 import java.util.Date;
 
 /**

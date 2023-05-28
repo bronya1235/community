@@ -21,4 +21,6 @@ public interface CommentMapper {
 	int selectCommentsCountByEntity(int entityType, int entityId);
 	//插入评论数据
 	int insertComment(Comment comment);
+	//根据评论的id查询某个具体评论
+	Comment selectCommentById(int id);
 }

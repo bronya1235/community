@@ -6,10 +6,12 @@ import com.nowcoder.app.community.pojo.Page;
 import com.nowcoder.app.community.pojo.User;
 import com.nowcoder.app.community.service.CommentService;
 import com.nowcoder.app.community.service.DiscussPostService;
+import com.nowcoder.app.community.service.LikeService;
 import com.nowcoder.app.community.service.UserService;
 import com.nowcoder.app.community.util.CommunityConstant;
 import com.nowcoder.app.community.util.Community_tool;
 import com.nowcoder.app.community.util.HostHolder;
+import com.nowcoder.app.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +38,8 @@ public class DiscussPortController implements CommunityConstant {
 
 	@Autowired
 	private CommentService commentService;
+	@Autowired
+	private LikeService likeService;
 
 	@PostMapping("/add")
 	@ResponseBody
@@ -68,6 +72,9 @@ public class DiscussPortController implements CommunityConstant {
 		User user = userService.findUserById(post.getUserId());
 		model.addAttribute("user", user);
 		//处理评论，页面会反馈的是当前页面，和每页限制数目，需要补充设置一些参数
+		//点赞
+		model.addAttribute("likeCount", likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId()));
+		model.addAttribute("likeStatus", hostHolder.getUser()==null?0:likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ENTITY_TYPE_POST, post.getId()));
 		page.setLimit(5);
 		page.setPath("/discuss/detail/"+id);
 		page.setRows(post.getCommentCount());
@@ -84,6 +91,10 @@ public class DiscussPortController implements CommunityConstant {
 				mapVO.put("comment", comment);
 				//评论的作者
 				mapVO.put("user", userService.findUserById(comment.getUserId()));
+				//某评论的赞数量
+				mapVO.put("likeCount", likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT, comment.getId()));
+				//某评论是否已赞
+				mapVO.put("likeStatus", hostHolder.getUser()==null?0:likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ENTITY_TYPE_COMMENT, comment.getId()));
 				/*注意：前一部分处理的是对帖子的评论，还需要处理对这些评论的回复，可以分成两类
 				* 1、单纯回复上述"comment",是没有具体的target目标的
 				* 2、在评论底下对某个人的回复进行回复，属于是两个人的之间的私聊，他是针对某一条回复的
@@ -102,6 +113,10 @@ public class DiscussPortController implements CommunityConstant {
 						//回复的目标，如果没有就是回复评论，如果有就是回复具体某个人等同于评论底下的私聊
 						User target = reply.getTargetId()==0?null:userService.findUserById(reply.getTargetId());
 						replyVO.put("target", target);
+						//某评论的赞数量
+						replyVO.put("likeCount", likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT, reply.getId()));
+						//某评论是否已赞
+						replyVO.put("likeStatus", hostHolder.getUser()==null?0:likeService.findEntityLikeStatus(hostHolder.getUser().getId(), ENTITY_TYPE_COMMENT, reply.getId()));
 						replyViewList.add(replyVO);
 					}
 				}

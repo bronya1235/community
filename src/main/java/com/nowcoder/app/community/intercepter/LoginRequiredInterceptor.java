@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  * @Author: Bao
  * @Date: 2022/7/14-07-14-20:57
  * @Description com.nowcoder.app.community.intercepter
- * @Function
+ * @Function 这个拦截器是用来拦截非法的请求的，比如直接敲url访问一些需要用户登录的场景
  */
 @Component
 public class LoginRequiredInterceptor implements HandlerInterceptor {

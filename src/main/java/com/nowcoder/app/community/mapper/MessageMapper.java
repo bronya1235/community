@@ -27,4 +27,12 @@ public interface MessageMapper {
 	int insertMessage(Message message);
 	//设置消息的状态，批量设置
 	int updateStatus(List<Integer> ids,int status);
+	//查询每个主题下的最新一条通知
+	Message selectLatestNotice(String topic,int userId);
+	//查询每个主题下的通知数量
+	int selectNoticeCount(String topic,int userId);
+	//查询每个主题下的未读的通知数量
+	int selectNoticeUnreadCount(String topic,int userId);
+	//查询每个主题下的所有通知
+	List<Message> selectNotices(String topic,int userId,int offset,int limit);
 }

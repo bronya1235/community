@@ -20,7 +20,7 @@ import java.util.Date;
  * @Author: Bao
  * @Date: 2022/7/13-07-13-21:42
  * @Description com.nowcoder.app.community.intercepter
- * @Function
+ * @Function 这个拦截器并不是用来拦截的，而是为了用户方便，在每个请求过来的时候，如果之前用户已经登录过了，就把用户信息持有一下
  */
 @Component
 public class LoginTicketInterceptor implements HandlerInterceptor {
@@ -33,7 +33,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		String ticket = Community_tool.getValue(request, "ticket");
+		String ticket = Community_tool.getCookieValue(request, "ticket");
 		if (ticket != null) {
 			LoginTicket loginTicket = userService.findLoginTicket(ticket);
 			//检查凭证是否有效
@@ -54,7 +54,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 		User user = hostHolder.getUser();
 		if (user != null && modelAndView != null) {
 			modelAndView.addObject("loginUser", user);
-			modelAndView.addObject("totalLetterUnreadCount", messageService.findLetterUnreadCount(user.getId(), null));
+			modelAndView.addObject("totalUnreadCount", messageService.findLetterUnreadCount(user.getId(), null)+messageService.findNoticeUnreadCount(user.getId(), null));
 		}
 	}
 

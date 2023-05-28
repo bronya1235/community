@@ -2,7 +2,10 @@ package com.nowcoder.app.community.controller;
 
 import com.nowcoder.app.community.annotation.LoginRequired;
 import com.nowcoder.app.community.pojo.User;
+import com.nowcoder.app.community.service.FollowService;
+import com.nowcoder.app.community.service.LikeService;
 import com.nowcoder.app.community.service.UserService;
+import com.nowcoder.app.community.util.CommunityConstant;
 import com.nowcoder.app.community.util.Community_tool;
 import com.nowcoder.app.community.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +36,7 @@ import java.io.IOException;
  */
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommunityConstant {
 	//日志
 	private Logger logger = LoggerFactory.getLogger(UserController.class);
 	//上传路径
@@ -50,6 +53,10 @@ public class UserController {
 	private HostHolder hostHolder;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private LikeService likeService;
+	@Autowired
+	private FollowService followService;
 
 	@LoginRequired
 	@GetMapping("/setting")
@@ -103,5 +110,29 @@ public class UserController {
 		} catch (IOException e) {
 			logger.error("读取头像失败：" + e.getMessage());
 		}
+	}
+
+	@GetMapping("/profile/{userId}")
+	public String getProfile(@PathVariable("userId")int userId,
+	                         Model model){
+		User user = userService.findUserById(userId);
+		if(user==null){
+			throw new RuntimeException("该用户不存在");
+		}
+		//用户
+		model.addAttribute("user", user);
+		int likeCount = likeService.findUserLikeCount(userId);
+		model.addAttribute("likeCount", likeCount);
+		//该用户关注数量
+		long followeeCount = followService.findFolloweeCount(userId, ENTITY_TYPE_USER);
+		model.addAttribute("followeeCount", followeeCount);
+		//该用户的粉丝数量
+		long followerCount = followService.findFollowerCount(userId, ENTITY_TYPE_USER);
+		model.addAttribute("followerCount", followerCount);
+		//登录用户是否已经关注此用户
+		User loginUser = hostHolder.getUser();
+		boolean followeeStatus = followService.findFolloweeStatus(loginUser.getId(), ENTITY_TYPE_USER, userId);
+		model.addAttribute("followeeStatus", followeeStatus);
+		return "site/profile";
 	}
 }

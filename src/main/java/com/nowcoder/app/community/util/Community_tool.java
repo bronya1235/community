@@ -31,7 +31,7 @@ public class Community_tool {
 	}
 
 	//从cookie中获取值的方法
-	public static String getValue(HttpServletRequest request, String key) {
+	public static String getCookieValue(HttpServletRequest request, String key) {
 		if (request == null || key == null) {
 			throw new IllegalArgumentException("参数为空，非法");
 

@@ -4,7 +4,9 @@ import com.nowcoder.app.community.pojo.DiscussPost;
 import com.nowcoder.app.community.pojo.Page;
 import com.nowcoder.app.community.pojo.User;
 import com.nowcoder.app.community.service.DiscussPostService;
+import com.nowcoder.app.community.service.LikeService;
 import com.nowcoder.app.community.service.UserService;
+import com.nowcoder.app.community.util.CommunityConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +24,13 @@ import java.util.Map;
  * @Function 首页的表现层控制器
  */
 @Controller
-public class HomeController {
+public class HomeController implements CommunityConstant {
 	@Autowired
 	private DiscussPostService discussPostService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private LikeService likeService;
 	@GetMapping("/index")
 	public String getIndexPage(Model model, Page page){
 		//方法调用前，会实例化model和page，并会自动把page封装到model中
@@ -39,6 +43,7 @@ public class HomeController {
 			map.put("post", post);
 			User user = userService.findUserById(post.getUserId());
 			map.put("user", user);
+			map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId()));
 			discussPosts.add(map);
 		}
 		model.addAttribute("discussPosts", discussPosts);
